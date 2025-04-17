@@ -126,22 +126,29 @@ class hook_callbacks {
         global $COURSE;
 
         $mform = $hook->mform;
+
+        // Add the header for the Cursive settings section.
         $mform->addElement('header', 'Cursive', get_string('pluginname', 'tiny_cursive'), [], [
-            'collapsed' => false,
+        'collapsed' => false,
         ]);
 
-        $mform->addElement('select', 'cursive_status', get_string('cursive_status', 'tiny_cursive'), [
-            '0' => get_string('disabled', 'tiny_cursive'),
-            '1' => get_string('enabled', 'tiny_cursive'),
-        ]);
-        $default = get_config('tiny_cursive', "cursive-$COURSE->id");
-        if ($default === false) {
-            $mform->setDefault('cursive_status', '1');
-        } else {
-            $mform->setDefault('cursive_status', $default);
-        }
+       // Add a static element for the notice above the enable/disable dropdown.
+       $notice = get_string('cursive_enable_notice', 'tiny_cursive') . 
+              ' <a href="https://cursivetechnology.com/" target="_blank">' . 
+              get_string('cursive_more_info', 'tiny_cursive') . '</a>';
+       $mform->addElement('static', 'cursive_notice', '', $notice);
+
+       // Add the enable/disable dropdown.
+       $mform->addElement('select', 'cursive_status', get_string('cursive_status', 'tiny_cursive'), [
+           '0' => get_string('disabled', 'tiny_cursive'),
+           '1' => get_string('enabled', 'tiny_cursive'),
+       ]);
+
+       // Set the default value for the dropdown.
+       $default = get_config('tiny_cursive', "cursive-$COURSE->id");
+       $mform->setDefault('cursive_status', $default);
     }
-
+    
     /**
      * Hook to handle form submission after it is processed.
      *
