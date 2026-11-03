@@ -54,7 +54,13 @@ class hook_callbacks {
         require_once($CFG->dirroot . '/lib/editor/tiny/plugins/cursive/locallib.php');
         require_once($CFG->dirroot . '/lib/editor/tiny/plugins/cursive/lib.php');
 
-        if (empty($COURSE) || during_initial_install()) {
+        // Skip entirely on the site-home/login/front-page context. $COURSE defaults to
+        // $SITE (SITEID) whenever there's no real course in scope, so the empty($COURSE)
+        // check above never actually catches login/front-page requests - tiny_cursive_status()
+        // was running (and paying a real DB round-trip on any config-cache miss) on every
+        // single page render including /login/index.php, a page with no editor and no
+        // legitimate use for a per-course writing-analytics check.
+        if (empty($COURSE) || $COURSE->id == SITEID || during_initial_install()) {
             return;
         }
 
